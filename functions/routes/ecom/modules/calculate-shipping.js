@@ -175,7 +175,7 @@ exports.post = ({ appSdk }, req, res) => {
               days: 3,
               ...appData.posting_deadline
             },
-            flags: ['pakman-ws', 'pakman-transportadora']
+            flags: ['pakman-ws', 'pakman']
           }
 
           // check for default configured additional/discount price
