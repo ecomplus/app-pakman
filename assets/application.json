@@ -1,11 +1,16 @@
 {
-  "app_id": 9000,
-  "title": "My Awesome E-Com Plus App",
-  "slug": "my-awesome-ecom-plus-app",
+  "app_id": 123143,
+  "title": "Pakman",
+  "slug": "pakman",
   "type": "external",
   "state": "active",
   "authentication": true,
-  "modules": {},
+  "modules": {
+    "calculate_shipping": {
+      "enabled": true,
+      "endpoint": "https://us-central1-ecom-pakman.cloudfunctions.net/app/ecom/modules/calculate-shipping"
+    }
+  },
   "auth_scope": {
     "stores/me": [
       "GET"
@@ -17,15 +22,147 @@
     "brands": [],
     "categories": [],
     "customers": [],
-    "orders": [],
+    "orders": [
+      "GET",
+      "PATCH"
+    ],
     "carts": [],
-    "orders/fulfillments": [],
+    "orders/fulfillments": [
+      "GET",
+      "POST"
+    ],
     "orders/payments_history": [],
     "products/quantity": [],
     "products/variations/quantity": [],
     "products/price": [],
     "products/variations/price": []
   },
-  "auth_callback_uri": "https://us-central1-ecom-app-boilerplate.cloudfunctions.net/app/ecom/auth-callback",
+  "admin_settings": {
+    "zip": {
+      "schema": {
+        "type": "string",
+        "maxLength": 9,
+        "pattern": "^[0-9]{5}-?[0-9]{3}$",
+        "title": "CEP de origem"
+      },
+      "hide": true
+    },
+    "apikey": {
+      "schema": {
+        "type": "string",
+        "maxLength": 100,
+        "title": "Api key Pakman",
+        "description": "Solicitar ao suporte da Pakman a api key"
+      },
+      "hide": true
+    },
+    "label": {
+      "schema": {
+        "type": "string",
+        "maxLength": 100,
+        "title": "Rótulo da forma de envio"
+      },
+      "hide": true
+    },
+    "posting_deadline": {
+      "schema": {
+        "title": "Prazo de postagem",
+        "type": "object",
+        "required": [
+          "days"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 999999,
+            "title": "Número de dias",
+            "description": "Dias de prazo para postar os produtos após a compra"
+          },
+          "working_days": {
+            "type": "boolean",
+            "default": true,
+            "title": "Dias úteis"
+          },
+          "after_approval": {
+            "type": "boolean",
+            "default": true,
+            "title": "Após aprovação do pagamento"
+          }
+        }
+      },
+      "hide": false
+    },
+    "additional_price": {
+      "schema": {
+        "type": "number",
+        "minimum": -999999,
+        "maximum": 999999,
+        "title": "Custo adicional",
+        "description": "Valor a adicionar (negativo para descontar) no frete calculado em todas regras"
+      },
+      "hide": false
+    },
+    "free_shipping_rules": {
+      "schema": {
+        "title": "Regras de frete grátis",
+        "type": "array",
+        "maxItems": 300,
+        "items": {
+          "title": "Regra de frete grátis",
+          "type": "object",
+          "minProperties": 1,
+          "properties": {
+            "zip_range": {
+              "title": "Faixa de CEP",
+              "type": "object",
+              "required": [
+                "min",
+                "max"
+              ],
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "minimum": 10000,
+                  "maximum": 999999999,
+                  "title": "CEP inicial"
+                },
+                "max": {
+                  "type": "integer",
+                  "minimum": 10000,
+                  "maximum": 999999999,
+                  "title": "CEP final"
+                }
+              }
+            },
+            "min_amount": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 999999999,
+              "title": "Valor mínimo da compra"
+            },
+            "product_ids": {
+              "title": "Lista de produtos",
+              "description": "Se preenchido, o desconto só será válido se um dos produtos estiver no carrinho",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{24}$",
+                "title": "ID do produto"
+              }
+            },
+            "all_product_ids": {
+              "type": "boolean",
+              "title": "Checar todos os produtos",
+              "description": "Se ativo, a regra será disponibilizada apenas se todos os itens do carrinho estiverem na lista de produtos selecionados"
+            }
+          }
+        }
+      },
+      "hide": false
+    }
+  },
+  "auth_callback_uri": "https://us-central1-ecom-pakman.cloudfunctions.net/app/ecom/auth-callback",
   "version": "1.0.0"
 }
