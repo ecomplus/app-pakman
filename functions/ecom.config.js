@@ -158,6 +158,14 @@ const app = {
        },
        hide: true
      },
+     label: {
+      schema: {
+        type: 'string',
+        maxLength: 100,
+        title: 'Rótulo da forma de envio'
+      },
+      hide: true
+    },
      posting_deadline: {
       schema: {
         title: 'Prazo de postagem',
