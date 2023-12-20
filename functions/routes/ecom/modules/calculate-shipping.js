@@ -138,6 +138,7 @@ exports.post = ({ appSdk }, req, res) => {
       },
       itens
     }
+    console.log('sending body', JSON.stringify(body))
     return axios.post(
       `https://api-public.pakman.com.br/pak/v1/ePak/quotations`,
       body,
@@ -177,10 +178,6 @@ exports.post = ({ appSdk }, req, res) => {
             flags: ['pakman-ws', 'pakman-transportadora']
           }
 
-          if (!lowestPriceShipping || lowestPriceShipping.price > price) {
-            lowestPriceShipping = shippingLine
-          }
-
           // check for default configured additional/discount price
           if (appData.additional_price) {
             if (appData.additional_price > 0) {
@@ -208,19 +205,6 @@ exports.post = ({ appSdk }, req, res) => {
             service_code: 'pakman',
             shipping_line: shippingLine
           })
-        
-
-          if (lowestPriceShipping) {
-            const { price } = lowestPriceShipping
-            const discount = typeof response.free_shipping_from_value === 'number' &&
-              response.free_shipping_from_value <= cartSubtotal
-              ? price
-              : 0
-            if (discount) {
-              lowestPriceShipping.total_price = price - discount
-              lowestPriceShipping.discount = discount
-            }
-          }
 
           res.send(response)
         } else {
