@@ -84,6 +84,7 @@ exports.post = ({ appSdk }, req, res) => {
 
   if (params.items) {
     let cartSubtotal = 0
+    let totalWeight = 0
     const itens = []
     params.items.forEach((item) => {
       const { sku, quantity, dimensions, weight } = item
@@ -121,6 +122,7 @@ exports.post = ({ appSdk }, req, res) => {
         }
       }
       for (let index = 0; index < quantity; index++) {
+        totalWeight += gWeight
         itens.push({
           productValue: ecomUtils.price(item) * 100,
           dimension: {
@@ -167,6 +169,11 @@ exports.post = ({ appSdk }, req, res) => {
             price: cost,
             total_price: cost,
             discount: 0,
+            package: {
+              weight: {
+                value: totalWeight || 1
+              }
+            },
             delivery_time: {
               days: parseInt(serviceLevelAgreement, 10),
               working_days: true
